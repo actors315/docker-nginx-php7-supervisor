@@ -1,4 +1,4 @@
-FROM actors315/webdev:v1
+FROM actors315/webdev:v2
 MAINTAINER actors315 "actors315@gmail.com"
 
 # 根据需要开放端口，打开前面的注释
@@ -34,6 +34,9 @@ MAINTAINER actors315 "actors315@gmail.com"
 
 # redis 配置文件,若未变更就不需要另外复制
 # COPY redis/redis.conf /usr/local/redis/etc/redis.conf
+
+# mongodb 配置文件,若未变更就不需要另外复制
+# COPY mongodb/mongodb.conf /usr/local/mongodb/mongodb.conf
 
 # supervisor 配置文件，拷贝需要启动的服务
 # COPY supervisor/supervisord.conf /etc/supervisord.conf
