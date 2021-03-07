@@ -10,6 +10,8 @@ RUN yum install -y wget gcc make bzip2 supervisor autoconf automake libtool \
 	&& wget http://nginx.org/download/nginx-1.18.0.tar.gz \
 	&& wget https://www.php.net/distributions/php-7.3.18.tar.bz2 \
 	&& wget https://github.com/kkos/oniguruma/archive/v6.9.4.tar.gz -O oniguruma-6.9.4.tar.gz \
+	&& wget https://www.kernel.org/pub/software/scm/git/git-2.18.0.tar.gz \
+	&& wget https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm \
 # 安装 nginx
 	&& cd /usr/local/src && tar -xvf nginx-1.18.0.tar.gz \
 	&& cd /usr/local/src/nginx-1.18.0 \
@@ -20,6 +22,7 @@ RUN yum install -y wget gcc make bzip2 supervisor autoconf automake libtool \
 	&& cd /usr/local/src/oniguruma-6.9.4 \
 	&& export LANGUAGE="en_US.UTF-8" && export LANG=en_US:zh_CN.UTF-8 && export LC_ALL=C \
 	&& ./autogen.sh && ./configure --prefix=/usr \
+	&& make && make install \
 # 安装 php
 	&& cd /usr/local/src && tar -xvf php-7.3.18.tar.bz2 \
 	&& cd /usr/local/src/php-7.3.18 \
@@ -30,6 +33,19 @@ RUN yum install -y wget gcc make bzip2 supervisor autoconf automake libtool \
 	&& cp /usr/local/src/php-7.3.18/php.ini-production /usr/local/php/lib/php.ini \
 	&& echo 'export PATH=/usr/local/php/bin:$PATH' >> /etc/profile \
 	&& mkdir -p /var/run/supervisor && chmod -R 666 /var/run/supervisor \
+# 安装 mysql
+	&& cd /usr/local/src \
+	&& rpm -ivh mysql57-community-release-el7-9.noarch.rpm \
+	&& yum install -y mysql-server \
+# 安装 git
+	&& cd /usr/local/src && tar -xvf git-2.18.0.tar.gz \
+	&& cd /usr/local/srcgit-2.18.0 \
+	&& make configure \
+	&& ./configure --prefix=/usr/local/git \
+	&& make && make install \
+	&& echo 'export PATH=/usr/local/git/bin:$PATH' >> /etc/profile \
+# 安装 redis
+# 安装 mongodb
 # 清理
 	&& rm -rf /usr/local/src/* \
 	&& yum remove -y gcc make wget autoconf automake libtool \

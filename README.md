@@ -6,7 +6,6 @@
 * nginx 版本 1.18.0  
 * PHP 版本 7.3.18  
 * Composer 版本 1.10.6  
-* SVN 版本 1.10.6  
 * Git 版本 
 * MySQL 版本 
 * MongoDB 版本 mongodb-linux-x86_64-4.0.18  
