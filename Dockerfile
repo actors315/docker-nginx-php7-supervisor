@@ -1,5 +1,41 @@
-FROM actors315/webdev:v2
+FROM centos:7
+
 MAINTAINER actors315 "actors315@gmail.com"
+
+RUN yum install -y epel-release
+
+RUN yum install -y wget gcc make bzip2 supervisor autoconf automake libtool \
+	openssl-devel pcre-devel zlib-devel libcurl-devel libxml2-devel sqlite-devel \
+	&& cd /usr/local/src \
+	&& wget http://nginx.org/download/nginx-1.18.0.tar.gz \
+	&& wget https://www.php.net/distributions/php-7.3.18.tar.bz2 \
+	&& wget https://github.com/kkos/oniguruma/archive/v6.9.4.tar.gz -O oniguruma-6.9.4.tar.gz \
+# 安装 nginx
+	&& cd /usr/local/src && tar -xvf nginx-1.18.0.tar.gz \
+	&& cd /usr/local/src/nginx-1.18.0 \
+	&& ./configure --prefix=/usr/local/nginx --with-http_ssl_module && make && make install \
+	&& echo 'export PATH=/usr/local/nginx/sbin:$PATH' >> /etc/profile \
+# 安装 oniguruma
+	&& cd /usr/local/src && tar -xvf oniguruma-6.9.4.tar.gz \
+	&& cd /usr/local/src/oniguruma-6.9.4 \
+	&& export LANGUAGE="en_US.UTF-8" && export LANG=en_US:zh_CN.UTF-8 && export LC_ALL=C \
+	&& ./autogen.sh && ./configure --prefix=/usr \
+# 安装 php
+	&& cd /usr/local/src && tar -xvf php-7.3.18.tar.bz2 \
+	&& cd /usr/local/src/php-7.3.18 \
+	&& ./configure --prefix=/usr/local/php --enable-fpm --with-fpm-user=www-data \
+	--with-fpm-group=www-data --enable-shared --enable-pdo --with-pdo-mysql \
+	--with-openssl --with-curl --enable-mbstring \
+	&& make && make install \
+	&& cp /usr/local/src/php-7.3.18/php.ini-production /usr/local/php/lib/php.ini \
+	&& echo 'export PATH=/usr/local/php/bin:$PATH' >> /etc/profile \
+	&& mkdir -p /var/run/supervisor && chmod -R 666 /var/run/supervisor \
+# 清理
+	&& rm -rf /usr/local/src/* \
+	&& yum remove -y gcc make wget autoconf automake libtool \
+	&& yum remove -y epel-release \
+	&& yum clean all
+	
 
 # 根据需要开放端口，打开前面的注释
 # ssh
